@@ -71,6 +71,15 @@ function rateLimit(ip) {
 }
 
 exports.handler = async (event) => {
+  // TEMP DEBUG: /.netlify/functions/contact?debug=1
+  if (event.queryStringParameters && event.queryStringParameters.debug === '1') {
+    const botToken = process.env.TG_BOT_TOKEN;
+    if (!botToken) return json(500, { ok: false, error: 'TG_BOT_TOKEN not set' });
+    const res = await fetch(`${TG_API}/bot${botToken}/getUpdates`);
+    const data = await res.json().catch(() => ({}));
+    return json(200, data);
+  }
+
   if (event.httpMethod !== 'POST') {
     return json(405, { ok: false, error: 'Method not allowed' });
   }
