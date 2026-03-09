@@ -139,7 +139,7 @@ strong { font-weight: var(--fw-semi); color: var(--clr-text); }
 
 .section__subtitle--quiz {
   color: var(--clr-text-2);
-  font-size: clamp(2.1rem, 4.4vw, 2.4rem);
+  font-size: clamp(1.25rem, 3.5vw, 2.4rem);
 }
 
 /* Акцентная черта под заголовком */
@@ -2434,6 +2434,8 @@ main, header, footer { position: relative; z-index: 1; }
   line-height: 1.5;
   padding-left: 1.1rem;
   position: relative;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .contact__audit-list li::before {
