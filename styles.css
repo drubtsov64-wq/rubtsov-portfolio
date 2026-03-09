@@ -499,6 +499,9 @@ body::before {
 
 /* Имя */
 .hero__name {
+  font-size: clamp(1.2rem, 3vw + .5rem, 2.5rem);
+  line-height: 1.25;
+  letter-spacing: -.015em;
   margin-bottom: .6rem;
   opacity: 0;
   animation: fadeUp .6s ease .25s both;
