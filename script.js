@@ -284,8 +284,9 @@ faqItems.forEach(item => {
 /* ============================================================
    8. ФОРМА КОНТАКТА — валидация + имитация отправки
    ============================================================ */
-const contactForm = document.getElementById('contactForm');
-const formSuccess = document.getElementById('formSuccess');
+const contactForm   = document.getElementById('contactForm');
+const formSuccess   = document.getElementById('formSuccess');
+const formSendError = document.getElementById('formSendError');
 
 if (contactForm) {
 
@@ -317,11 +318,14 @@ if (contactForm) {
         setTimeout(() => { formSuccess.hidden = true; }, 6000);
       })
       .catch(() => {
-        alert('Ошибка отправки. Напишите напрямую: wwwsamo@yandex.ru');
+        if (formSendError) {
+          formSendError.hidden = false;
+          setTimeout(() => { formSendError.hidden = true; }, 8000);
+        }
       })
       .finally(() => {
         submitBtn.disabled    = false;
-        submitBtn.textContent = 'Отправить сообщение';
+        submitBtn.textContent = 'Записаться на аудит';
       });
   });
 
@@ -710,7 +714,12 @@ document.querySelectorAll('a[href]').forEach(link => {
   const quizSection = document.getElementById('quiz');
 
   if (fab) {
-    fab.addEventListener('click', openOverlay);
+    fab.addEventListener('click', () => {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
 
     // Скрываем FAB пока inline-квиз виден на экране
     if (quizSection && 'IntersectionObserver' in window) {

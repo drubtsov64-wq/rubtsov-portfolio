@@ -287,7 +287,7 @@
     <section class="section quiz reveal" id="quiz" aria-labelledby="quizHeading">
       <div class="container">
         <h2 class="section__title" id="quizHeading">Подберём решение под вашу задачу</h2>
-        <p class="section__subtitle">Ответьте на 3 вопроса — пришлю точную стоимость и сроки</p>
+        <p class="section__subtitle section__subtitle--quiz">Ответьте всего на <span class="text-accent">3 вопроса</span> — и получите точную стоимость и сроки проекта</p>
 
         <div class="quiz-box" id="quizInline">
 
@@ -649,19 +649,22 @@
     <section class="section contact reveal" id="contact" aria-labelledby="contactHeading">
       <div class="container contact__inner">
 
-        <h2 class="section__title" id="contactHeading">Обсудим вашу задачу?</h2>
+        <h2 class="section__title" id="contactHeading">Бесплатный аудит проекта — 30 минут созвона</h2>
         <p class="contact__subtitle">
-          Напишите — и в течение нескольких часов у вас будет понимание,
-          что делать и сколько это стоит.
+          Разберём вашу задачу, найдём слабые места и определим,
+          какой следующий шаг имеет смысл. Без обязательств и готового плана в подарок.
         </p>
 
-        <!-- Мессенджер CTA -->
+        <!-- Что будет на аудите -->
         <div class="contact__messenger">
           <div class="contact__messenger-body">
-            <p class="contact__messenger-title">Быстрее всего позвонить по телефону</p>
-            <div class="contact__quick">
-              <a href="tel:+79771573476" class="contact__messenger-phone">+7&nbsp;(977)&nbsp;157‑34‑76</a>
-            </div>
+            <p class="contact__messenger-title">Что будет на аудите</p>
+            <ul class="contact__audit-list">
+              <li>Разбор текущей задачи и контекста проекта</li>
+              <li>Диагностика слабых мест</li>
+              <li>Понимание формата и подхода к решению</li>
+              <li>Ориентир по следующему шагу</li>
+            </ul>
           </div>
         </div>
 
@@ -690,18 +693,22 @@
           </div>
 
           <div class="form-group">
-            <label for="contactMessage">Что нужно? <abbr title="обязательное поле">*</abbr></label>
+            <label for="contactMessage">Кратко о проекте <abbr title="обязательное поле">*</abbr></label>
             <textarea id="contactMessage" name="message" rows="4"
-                      placeholder="Опишите задачу в паре предложений — разберёмся вместе."
+                      placeholder="Кратко опишите проект или задачу, чтобы я понял, с чем вы приходите на аудит."
                       required></textarea>
             <span class="form-error" role="alert" aria-live="polite"></span>
           </div>
 
           <button type="submit" class="btn btn--primary btn--full">
-            Отправить сообщение
+            Записаться на аудит
           </button>
           <p class="form-success" id="formSuccess" hidden role="status">
-            Отлично, сообщение получено! Отвечу в течение нескольких часов.
+            Отлично, заявка получена! Свяжусь с вами в течение нескольких часов, чтобы согласовать время.
+          </p>
+          <p class="form-send-error" id="formSendError" hidden role="alert">
+            Не удалось отправить. Напишите напрямую:
+            <a href="mailto:wwwsamo@yandex.ru">wwwsamo@yandex.ru</a>
           </p>
 
         </form>
@@ -907,12 +914,12 @@
        FLOATING QUIZ BUTTON (Вариант 3 — FAB)
        ============================================================ -->
   <button class="quiz-fab" id="quizFab" type="button"
-          aria-label="Открыть квиз для получения предложения">
+          aria-label="Записаться на бесплатный аудит проекта">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
     </svg>
-    <span class="quiz-fab__label">Получить предложение</span>
+    <span class="quiz-fab__label">Записаться на аудит</span>
   </button>
 
   <script src="script.js?v=2" defer></script>
