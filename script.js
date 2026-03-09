@@ -584,7 +584,11 @@ document.querySelectorAll('a[href]').forEach(link => {
     // Кнопка «Назад»
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        if (step > 1) showStep(step - 1);
+        if (step > 1) {
+          wrapperEl.classList.add('quiz-box--going-back');
+          showStep(step - 1);
+          setTimeout(() => wrapperEl.classList.remove('quiz-box--going-back'), 350);
+        }
       });
     }
 
@@ -673,7 +677,12 @@ document.querySelectorAll('a[href]').forEach(link => {
     if (!overlay) return;
     overlay.classList.remove('is-open');
     document.body.style.overflow = '';
+    // Safety fallback: if transitionend doesn't fire (reduced-motion, tab hidden), hide after delay
+    const tid = setTimeout(() => {
+      if (!overlay.classList.contains('is-open')) overlay.hidden = true;
+    }, 400);
     overlay.addEventListener('transitionend', () => {
+      clearTimeout(tid);
       if (!overlay.classList.contains('is-open')) overlay.hidden = true;
     }, { once: true });
   }
