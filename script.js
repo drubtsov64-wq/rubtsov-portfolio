@@ -287,6 +287,41 @@ faqItems.forEach(item => {
 const contactForm   = document.getElementById('contactForm');
 const formSuccess   = document.getElementById('formSuccess');
 const formSendError = document.getElementById('formSendError');
+const CONTACT_API_ENDPOINT = '/api/contact.php';
+const FALLBACK_EMAIL = 'wwwsamo@yandex.ru';
+
+function postContactRequest(payload) {
+  return fetch(CONTACT_API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+    .then(async res => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error('Send error');
+      return data;
+    });
+}
+
+function openMailtoFallback(payload, source = 'site') {
+  const lines = [
+    'Заявка с сайта',
+    '',
+    `Источник: ${source}`,
+    `Имя: ${payload.name || '—'}`,
+    `Контакт: ${payload.contact || '—'}`,
+  ];
+
+  if (payload.service) lines.push(`Услуга: ${payload.service}`);
+  if (payload.timing) lines.push(`Сроки: ${payload.timing}`);
+  if (payload.contact_method) lines.push(`Способ связи: ${payload.contact_method}`);
+  if (payload.message) lines.push(`Сообщение: ${payload.message}`);
+
+  const subject = source === 'quiz' ? 'Заявка на аудит (квиз)' : 'Заявка на аудит';
+  const body = lines.join('\n');
+  window.location.href =
+    `mailto:${FALLBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 if (contactForm) {
 
@@ -300,19 +335,15 @@ if (contactForm) {
 
     const data = new FormData(contactForm);
 
-    fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name:    data.get('name'),
-        contact: data.get('contact'),
-        message: data.get('message'),
-        hp:      data.get('hp') || '',
-      }),
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (!res.ok) throw new Error('Send error');
+    const payload = {
+      name: data.get('name'),
+      contact: data.get('contact'),
+      message: data.get('message'),
+      hp: data.get('hp') || '',
+    };
+
+    postContactRequest(payload)
+      .then(() => {
         contactForm.reset();
         formSuccess.hidden = false;
         setTimeout(() => { formSuccess.hidden = true; }, 6000);
@@ -618,20 +649,25 @@ document.querySelectorAll('a[href]').forEach(link => {
         submitBtn.disabled    = true;
         submitBtn.textContent = 'Отправляем…';
 
-        fetch('/api/contact', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            source:         'quiz',
-            service:        answers[1] || '',
-            timing:         answers[2] || '',
-            contact_method: answers[3] || '',
-            name:           nameInp?.value.trim() || '',
-            contact:        contInp?.value.trim() || '',
-          }),
-        })
-        .catch(() => {})           // silent fail — всё равно показываем экран успеха
-        .finally(() => showDone());
+        const payload = {
+          source:         'quiz',
+          service:        answers[1] || '',
+          timing:         answers[2] || '',
+          contact_method: answers[3] || '',
+          name:           nameInp?.value.trim() || '',
+          contact:        contInp?.value.trim() || '',
+        };
+
+        postContactRequest(payload)
+          .then(() => showDone(true))
+          .catch(() => {
+            showDone(false);
+            openMailtoFallback(payload, 'quiz');
+          })
+          .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Отправить';
+          });
       });
     }
 
@@ -644,11 +680,23 @@ document.querySelectorAll('a[href]').forEach(link => {
       }
     });
 
-    function showDone() {
+    function showDone(sent = true) {
       wrapperEl.querySelectorAll('.quiz-box__step').forEach(s => { s.hidden = true; });
       if (headEl) headEl.hidden = true;
       if (footEl) footEl.hidden = true;
       if (doneEl) {
+        const doneTitle = doneEl.querySelector('h3');
+        const doneText = doneEl.querySelector('p');
+        if (doneTitle) {
+          doneTitle.textContent = sent
+            ? 'Заявка принята!'
+            : 'Не удалось отправить автоматически';
+        }
+        if (doneText) {
+          doneText.textContent = sent
+            ? 'Напишу вам в ближайшие несколько часов. Спасибо!'
+            : 'Откроется черновик письма. Отправьте его, и я свяжусь с вами вручную.';
+        }
         doneEl.hidden = false;
         if (fillEl) fillEl.style.width = '100%';
       }
@@ -714,10 +762,12 @@ document.querySelectorAll('a[href]').forEach(link => {
   const quizSection = document.getElementById('quiz');
 
   if (fab) {
-    fab.addEventListener('click', () => {
+    fab.addEventListener('click', e => {
       const contactSection = document.getElementById('contact');
       if (contactSection) {
+        e.preventDefault();
         contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', '#contact');
       }
     });
 
